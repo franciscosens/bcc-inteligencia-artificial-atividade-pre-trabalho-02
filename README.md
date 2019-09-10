@@ -19,11 +19,11 @@ currLine = 1
 currCol = 1
 
 def exibir(matriz):
-plt.imshow(matriz, 'gray')
-plt.show(block=False)
-plt.plot(currCol, currLine, '*r', 'LineWidth', 5)
-plt.pause(0.5)
-plt.clf()
+    plt.imshow(matriz, 'gray')
+    plt.show(block=False)
+    plt.plot(currCol, currLine, '*r', 'LineWidth', 5)
+    plt.pause(0.5)
+    plt.clf()
 ```
 
 porém funciona apenas em ambientes onde a biblioteca matplotlib esteja instalada.
