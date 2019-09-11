@@ -5,11 +5,20 @@ import matplotlib.pyplot as plt
 currLine = 1
 currCol = 1
 
+POSICAO_ACIMA = 'acima'
+POSICAO_ABAIXO = 'abaixo'
+POSICAO_ESQUERDA ='esquerda'
+POSICAO_DIREITA = 'direita'
+POSICAO_ASPIRAR = 'aspirar'
+
+def agenteReativoSimples(percepcao):
+    pass
+
 def exibir(matriz):
     plt.imshow(matriz, 'gray')
-    plt.show(block=False)
+    plt.show(block=True)
     plt.plot(currCol, currLine, '*r', 'LineWidth', 5)
-    plt.pause(100)
+    plt.pause(0.5)
     plt.clf()
 
 if __name__ == "__main__":
