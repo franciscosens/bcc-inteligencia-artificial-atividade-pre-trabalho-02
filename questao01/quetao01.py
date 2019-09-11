@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import random
-
+import time
 
 class Posicao:
     def __init__(self, i, j):
@@ -12,6 +12,7 @@ class Questao01:
     # Neste cas0o o robo começa na posição [1][1]
 
     def __init__(self):
+        print("asas")
         self.voltou_comeco = False
         self.mapeado = False
         self.limpou = False
@@ -25,6 +26,7 @@ class Questao01:
         self.gerar_matriz()
         self.gerar_posicao_aspirador()
         self.exibir(self.matriz)
+        self.lugar_sujo
 
     POSICAO_ACIMA = 'acima'
     POSICAO_ABAIXO = 'abaixo'
@@ -38,18 +40,12 @@ class Questao01:
     def gerar_matriz(self):
         # TODO: fazer através de um FOR
         self.matriz = [
-            [self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE,  self.STATUS_PAREDE_VERDE,
-                self.STATUS_PAREDE_VERDE,    self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE],
-            [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,
-                self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
-            [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,
-                self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
-            [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,
-                self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
-            [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,
-                self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
-            [self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE,  self.STATUS_PAREDE_VERDE,
-                self.STATUS_PAREDE_VERDE,    self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE]
+            [self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE,  self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE,    self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE],
+            [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,     self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
+            [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,     self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
+            [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,     self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
+            [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,     self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
+            [self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE,  self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE,    self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE]
         ]
         self.quantidade_linhas = len(self.matriz) - 2
         self.quantidade_colunas = len(self.matriz) - 2
@@ -60,7 +56,6 @@ class Questao01:
                     self.matriz[i][j] = self.STATUS_SUJO_AMARELO
         self.matriz_mapeado = [[False for x in range(
             self.quantidade_colunas + 2)] for y in range(self.quantidade_linhas + 2)]
-        print(self.matriz_mapeado)
 
     def agenteReativoSimples(self, percepcao):
         pass
@@ -83,31 +78,56 @@ class Questao01:
         if(self.current_col == 1 and self.current_line == 1):
             self.voltou_comeco = True
 
+    def verificar_membro_mapeado(self, i, j):
+        if(self.matriz_mapeado[i][j] == False):
+            self.current_line = i
+            self.current_col = j
+            self.matriz_mapeado[self.current_line][self.current_col] = True
+            return True
+        return False
+
     def mapear(self):
         if(self.matriz[self.current_line][self.current_col] == self.STATUS_SUJO_AMARELO):
             self.lugares_sujos.append(
                 Posicao(self.current_line, self.current_col))
 
         if(self.current_col < self.quantidade_colunas and self.current_line < self.quantidade_linhas):
-            if(self.matriz_mapeado[self.current_line][self.current_col + 1] == False):
-                self.current_col = self.current_col + 1
-                self.matriz_mapeado[self.current_line][self.current_col] = True
+            if(self.verificar_membro_mapeado(self.current_line, self.current_col + 1)):
                 return
 
         if(self.current_col > 1):
-            if(self.matriz_mapeado[self.current_line][self.current_col - 1] == False):
-                self.current_col = self.current_col - 1
-                self.matriz_mapeado[self.current_line][self.current_col] = True
+            if(self.verificar_membro_mapeado(self.current_line, self.current_col - 1)):
                 return
 
         if (((self.current_col == self.quantidade_colunas) or (self.current_col == 1)) and self.current_line < self.quantidade_linhas):
-            if(self.matriz_mapeado[self.current_line + 1][self.current_col] == False):
-                self.current_line = self.current_line + 1
-                self.matriz_mapeado[self.current_line][self.current_col] = True
+            if(self.verificar_membro_mapeado(self.current_line + 1, self.current_col)):
                 return
         self.mapeado = True
 
     def limpar(self):
+        if len(self.lugares_sujos) > 0:
+
+            posicao = [self.lugares_sujos.index(n) for n in filter(lambda n: (n.i == self.current_line and n.j == self.current_col) or None, self.lugares_sujos)]
+            
+            if(len(posicao) == 1):
+                self.lugar_sujo = self.lugares_sujos[posicao[0]]
+                if self.lugar_sujo and self.current_line == self.lugar_sujo.i and self.current_col == self.lugar_sujo.j:
+                    self.matriz[self.current_line][self.current_col] = self.STATUS_LIMPO_AZUL
+                    self.lugares_sujos.remove(self.lugar_sujo)
+                    return 
+            
+            self.lugar_sujo = self.lugares_sujos[len(self.lugares_sujos) - 1]
+            if self.current_line > self.lugar_sujo.i:
+                self.current_line = self.current_line - 1
+            elif self.current_col > self.lugar_sujo.j:
+                self.current_col = self.current_col - 1
+            elif self.current_line < self.lugar_sujo.i:
+                self.current_line = self.current_line + 1
+            elif self.current_col < self.lugar_sujo.j:
+                self.current_col = self.current_col + 1
+
+        else:
+            self.limpou = True
         pass
 
     def exibir(self, matriz):
@@ -115,18 +135,19 @@ class Questao01:
             plt.imshow(matriz, 'gray')
             plt.show(block=False)
             plt.plot(self.current_col, self.current_line, '*r', 'LineWidth', 5)
-            plt.pause(0.2)
+            plt.pause(0.1)
             if not self.voltou_comeco:
                 self.voltar_ao_comeco()
             elif not self.mapeado:
                 self.mapear()
             elif not self.limpou:
-                for lugar_sujo in self.lugares_sujos:
-                    print(str(lugar_sujo.i) + " "  + str(lugar_sujo.j))
                 self.limpar()
-                self.limpou = True
+            else:
+                time.sleep(1)
+                print("asa")
+                plt.close()
+                return self.__init__()
             plt.clf()
-
 
 
 if __name__ == "__main__":
