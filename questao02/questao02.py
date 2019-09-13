@@ -8,7 +8,6 @@ class Posicao:
         self.i = i
         self.j = j
 
-
 class Questao02:
 
     def __init__(self):
@@ -94,24 +93,35 @@ class Questao02:
                     self.matriz[self.current_line][self.current_col] = self.STATUS_LIMPO_AZUL
                     self.lugares_sujos.remove(self.lugar_sujo)
                     print("Estado da percepcao: 1 Acao escolhida: "+self.POSICAO_ASPIRAR)
+                    self.pontos += 1
                     return
 
-            self.lugar_sujo = self.lugares_sujos[len(self.lugares_sujos) - 1]
-            if self.current_line > self.lugar_sujo.i:
-                self.current_line = self.current_line - 1
-                print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_ACIMA)
-            elif self.current_col > self.lugar_sujo.j:
-                self.current_col = self.current_col - 1
-                print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_ESQUERDA)
+            self.lugar_sujo = self.lugares_sujos[0]
+            if self.current_line == self.lugar_sujo.i:
+                if self.current_col < self.lugar_sujo.j:
+                    self.current_col = self.current_col + 1
+                    print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_DIREITA)
+                    self.pontos += 1
+                else:
+                    self.current_col = self.current_col - 1
+                    print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_ESQUERDA)
+                    self.pontos += 1
+            elif self.current_col == self.lugar_sujo.j:
+                if self.current_line < self.lugar_sujo.i:
+                    self.current_line = self.current_line + 1
+                    print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_ABAIXO)
+                    self.pontos += 1
+                else:
+                    self.current_line = self.current_line - 1
+                    print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_ACIMA)
+                    self.pontos += 1
             elif self.current_line < self.lugar_sujo.i:
-                self.current_line = self.current_line + 1
-                print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_ABAIXO)
-            elif self.current_col < self.lugar_sujo.j:
-                self.current_col = self.current_col + 1
-                print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_DIREITA)
-
+                    self.current_line = self.current_line + 1
+                    print("Estado da percepcao: 0 Acao escolhida: " + self.POSICAO_ABAIXO)
+                    self.pontos += 1
         else:
             self.limpou = True
+            print("Ponto:->" + str(self.pontos))
         pass
 
     def exibir(self, matriz):
@@ -126,11 +136,10 @@ class Questao02:
                 self.checkObj()
             else:
                 time.sleep(1)
-                print("asa")
+                print("Fim")
                 plt.close()
                 return self.__init__()
             plt.clf()
-
 
 if __name__ == "__main__":
     q = Questao02()
