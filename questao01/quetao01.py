@@ -2,31 +2,43 @@ import matplotlib.pyplot as plt
 import random
 import time
 
-class Posicao:
-    def __init__(self, i, j):
+class Ponto:
+    def __init__(self, i, j, direcao):
         self.i = i
         self.j = j
+        self.direcao = direcao
 
 
 class Questao01:
     # Neste cas0o o robo começa na posição [1][1]
 
     def __init__(self):
-        print("asas")
-        self.voltou_comeco = False
-        self.mapeado = False
-        self.limpou = False
-        self.lugares_sujos = []
+        self.matriz_geradora = [
+            Ponto(1, 1, self.POSICAO_DIREITA),   
+            Ponto(1, 2, self.POSICAO_DIREITA),   
+            Ponto(1, 3, self.POSICAO_DIREITA),   
+            Ponto(1, 4, self.POSICAO_ABAIXO),   
+            Ponto(2, 4, self.POSICAO_ABAIXO),   
+            Ponto(3, 4, self.POSICAO_ABAIXO),   
+            Ponto(4, 4, self.POSICAO_ESQUERDA),
+            Ponto(4, 3, self.POSICAO_ACIMA),
+            Ponto(3, 3, self.POSICAO_ACIMA),  
+            Ponto(2, 3, self.POSICAO_ESQUERDA),
+            Ponto(2, 2, self.POSICAO_ABAIXO),
+            Ponto(3, 2, self.POSICAO_ABAIXO),
+            Ponto(4, 2, self.POSICAO_ESQUERDA),
+            Ponto(4, 1, self.POSICAO_ACIMA),
+            Ponto(3, 1, self.POSICAO_ACIMA),
+            Ponto(2, 1, self.POSICAO_ACIMA),
+        ]
         self.current_line = 1
         self.current_col = 1
         self.quantidade_linhas = 0
         self.quantidade_colunas = 0
         self.matriz = []
-        self.matriz_mapeado = []
         self.gerar_matriz()
         self.gerar_posicao_aspirador()
         self.exibir(self.matriz)
-        self.lugar_sujo
 
     POSICAO_ACIMA = 'acima'
     POSICAO_ABAIXO = 'abaixo'
@@ -38,7 +50,6 @@ class Questao01:
     STATUS_SUJO_AMARELO = 2
 
     def gerar_matriz(self):
-        # TODO: fazer através de um FOR
         self.matriz = [
             [self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE,  self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE,    self.STATUS_PAREDE_VERDE,   self.STATUS_PAREDE_VERDE],
             [self.STATUS_PAREDE_VERDE,   self.STATUS_LIMPO_AZUL,    self.STATUS_LIMPO_AZUL,     self.STATUS_LIMPO_AZUL,      self.STATUS_LIMPO_AZUL,     self.STATUS_PAREDE_VERDE],
@@ -58,7 +69,14 @@ class Questao01:
             self.quantidade_colunas + 2)] for y in range(self.quantidade_linhas + 2)]
 
     def agenteReativoSimples(self, percepcao):
-        pass
+        if(percepcao == self.POSICAO_DIREITA):
+            self.current_col = self.current_col + 1
+        elif percepcao == self.POSICAO_ESQUERDA:
+            self.current_col = self.current_col - 1
+        elif percepcao == self.POSICAO_ACIMA:
+            self.current_line = self.current_line - 1
+        elif percepcao ==  self.POSICAO_ABAIXO:
+            self.current_line = self.current_line + 1
 
     def gerar_posicao_aspirador(self):
         self.current_line = random.randint(1, 4)
@@ -86,49 +104,13 @@ class Questao01:
             return True
         return False
 
-    def mapear(self):
-        if(self.matriz[self.current_line][self.current_col] == self.STATUS_SUJO_AMARELO):
-            self.lugares_sujos.append(
-                Posicao(self.current_line, self.current_col))
-
-        if(self.current_col < self.quantidade_colunas and self.current_line < self.quantidade_linhas):
-            if(self.verificar_membro_mapeado(self.current_line, self.current_col + 1)):
-                return
-
-        if(self.current_col > 1):
-            if(self.verificar_membro_mapeado(self.current_line, self.current_col - 1)):
-                return
-
-        if (((self.current_col == self.quantidade_colunas) or (self.current_col == 1)) and self.current_line < self.quantidade_linhas):
-            if(self.verificar_membro_mapeado(self.current_line + 1, self.current_col)):
-                return
-        self.mapeado = True
-
     def limpar(self):
-        if len(self.lugares_sujos) > 0:
-
-            posicao = [self.lugares_sujos.index(n) for n in filter(lambda n: (n.i == self.current_line and n.j == self.current_col) or None, self.lugares_sujos)]
-            
-            if(len(posicao) == 1):
-                self.lugar_sujo = self.lugares_sujos[posicao[0]]
-                if self.lugar_sujo and self.current_line == self.lugar_sujo.i and self.current_col == self.lugar_sujo.j:
-                    self.matriz[self.current_line][self.current_col] = self.STATUS_LIMPO_AZUL
-                    self.lugares_sujos.remove(self.lugar_sujo)
-                    return 
-            
-            self.lugar_sujo = self.lugares_sujos[len(self.lugares_sujos) - 1]
-            if self.current_line > self.lugar_sujo.i:
-                self.current_line = self.current_line - 1
-            elif self.current_col > self.lugar_sujo.j:
-                self.current_col = self.current_col - 1
-            elif self.current_line < self.lugar_sujo.i:
-                self.current_line = self.current_line + 1
-            elif self.current_col < self.lugar_sujo.j:
-                self.current_col = self.current_col + 1
-
-        else:
-            self.limpou = True
-        pass
+        posicao = [self.matriz_geradora.index(n) for n in filter(lambda n: (n.i == self.current_line and n.j == self.current_col) or None, self.matriz_geradora)]
+        if(len(posicao) == 1):
+            ponto = self.matriz_geradora[posicao[0]]
+            if(self.matriz[self.current_line][self.current_col] == self.STATUS_SUJO_AMARELO):
+                self.matriz[self.current_line][self.current_col] = self.STATUS_LIMPO_AZUL
+            self.agenteReativoSimples(ponto.direcao)
 
     def exibir(self, matriz):
         while 1 == 1:
@@ -136,17 +118,7 @@ class Questao01:
             plt.show(block=False)
             plt.plot(self.current_col, self.current_line, '*r', 'LineWidth', 5)
             plt.pause(0.1)
-            if not self.voltou_comeco:
-                self.voltar_ao_comeco()
-            elif not self.mapeado:
-                self.mapear()
-            elif not self.limpou:
-                self.limpar()
-            else:
-                time.sleep(1)
-                print("asa")
-                plt.close()
-                return self.__init__()
+            self.limpar()
             plt.clf()
 
 
